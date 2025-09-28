@@ -1,0 +1,32 @@
+# --- Core & Data Handling ---
+pandas
+scikit-learn
+torch
+tqdm
+
+# --- AI & Machine Learning ---
+transformers
+sentence-transformers
+langchain
+langchain-core
+langchain-google-genai
+langchain-mongodb
+langchain-huggingface
+
+# --- Backend API ---
+fastapi
+uvicorn[standard]
+pydantic
+
+# --- Frontend UI ---
+streamlit
+requests
+
+# --- Database & Environment ---
+pymongo
+python-dotenv
+email-validator
+
+# --- Testing ---
+pytest
+httpx

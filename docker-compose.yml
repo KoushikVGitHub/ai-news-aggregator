@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Mount local code for hot-reloading during development
+      - ./backend:/app/backend
+      - ./services:/app/services
+    # The name 'backend' becomes the hostname inside the Docker network
+    hostname: backend
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./ui:/app/ui
+    # This ensures the backend starts before the frontend
+    depends_on:
+      - backend
