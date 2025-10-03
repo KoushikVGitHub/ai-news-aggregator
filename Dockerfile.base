@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy only the requirements file
+COPY requirements.txt .
+
+# Install all dependencies
+# We add a longer timeout as a safeguard
+RUN pip install --timeout=600 --no-cache-dir -r requirements.txt

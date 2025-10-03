@@ -1,10 +1,14 @@
+# --- Pip Configuration ---
+--extra-index-url https://download.pytorch.org/whl/cpu
+
 # --- Core & Data Handling ---
 pandas
+numpy
 scikit-learn
-torch
 tqdm
 
 # --- AI & Machine Learning ---
+torch
 transformers
 sentence-transformers
 langchain

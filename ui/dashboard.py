@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # --- CONFIGURATION ---
-BACKEND_URL = "http://backend:8000" # URL of your FastAPI backend
+BACKEND_URL = "http://backend:8000" # URL of FastAPI backend
 
 st.set_page_config(page_title="AI News Aggregator", layout="wide")
 
