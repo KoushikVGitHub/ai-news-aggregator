@@ -74,12 +74,11 @@ pip install -r requirements.txt
         "similarity": "cosine"
       }]
     }
-4.  Configure Network Access:
+### 5.  Configure Network Access:
     In the left-hand menu, under "Security," click Network Access.
     Click "Add IP Address" and select "Allow Access from Anywhere" (0.0.0.0/0). This is necessary for the Docker container to connect.
-    ```
 
-### 5. Create the `.env` File
+### 6. Create the `.env` File
 Create a file named `.env` in the project's root directory. Copy the contents of your API keys and database connection string into it.
 
 ```
@@ -158,12 +157,12 @@ python scripts/4_load_to_mongodb.py
 4. Launch the Application
    You need to run the backend and frontend in two separate terminals.
 
-###Terminal 1: Start the Backend API
+Terminal 1: Start the Backend API
 ```bash
    uvicorn backend.main:app --reload
 ```
 
-###Terminal 2: Start the Frontend UI
+Terminal 2: Start the Frontend UI
 ```bash
    streamlit run ui/dashboard.py
 ```
