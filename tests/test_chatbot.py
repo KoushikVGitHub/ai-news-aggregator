@@ -8,8 +8,6 @@ from langchain_core.output_parsers import StrOutputParser
 
 # Add the project root to the path to allow imports from 'services'
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-# Import the BUILDING BLOCKS from your chatbot service
 from services.chatbot import prompt, llm, format_docs
 
 def test_chatbot_with_context():

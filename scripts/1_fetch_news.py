@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from newsdataapi import NewsDataApiClient
 from datetime import datetime, timedelta
 
-# --- API Fetching Functions (with Pagination) ---
+# --- API Fetching Functions with Pagination ---
 
 def get_raw_news_from_newsdata(min_results=100):
     """Fetches and returns raw articles from Newsdata.io, handling pagination."""
@@ -17,7 +17,6 @@ def get_raw_news_from_newsdata(min_results=100):
     next_page_token = None
     try:
         api = NewsDataApiClient(apikey=api_key)
-        # Loop until we have enough results or there are no more pages
         while len(all_articles) < min_results:
             response = api.latest_api(country='au', language='en', page=next_page_token)
             results = response.get('results', [])
@@ -33,7 +32,7 @@ def get_raw_news_from_newsdata(min_results=100):
         return all_articles
     except Exception as e:
         print(f"Error fetching from Newsdata.io: {e}")
-        return all_articles # Return what we have so far
+        return all_articles
 
 def get_raw_news_from_worldnews(min_results=100):
     """Fetches and returns raw articles from World News API, handling pagination."""

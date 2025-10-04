@@ -30,11 +30,10 @@ vector_store = MongoDBAtlasVectorSearch(
     collection=collection,
     embedding=embedding_model,
     index_name="vector_index",
-    text_key="summary",    # The field in your documents that was embedded
-    embedding_key="embedding" # The field where the embedding vector is stored
+    text_key="summary", 
+    embedding_key="embedding"
 )
 # 4. Initialize the Retriever
-# This component finds the most relevant articles in the database.
 retriever = vector_store.as_retriever(search_kwargs={'k': 5})
 
 # 5. Initialize the Generative Model (Gemini)

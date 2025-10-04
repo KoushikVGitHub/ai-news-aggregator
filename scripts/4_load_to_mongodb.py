@@ -31,7 +31,7 @@ def main():
 
     # --- 3. Prepare and Execute Bulk Upsert ---
     print("Step 3: Preparing and executing bulk upsert operation...")
-    # Using 'upsert=True' will insert a document if it doesn't exist,
+    # Using 'upsert=True' to insert a document if it doesn't exist,
     # or update it if it does, based on the 'article_url'.
     bulk_operations = [
         operations.UpdateOne(

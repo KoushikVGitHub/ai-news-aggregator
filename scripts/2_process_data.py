@@ -10,11 +10,11 @@ def standardize_newsdata(df):
         'link': 'article_url',
         'source_id': 'source',
         'pubDate': 'published_date',
-        'image_url': 'image_url',   # Add image_url
-        'creator': 'authors'       # Add creator as authors
+        'image_url': 'image_url',
+        'creator': 'authors'
     })
     
-    # Use the summary (which comes from the description) as the full_text
+    # Use the summary which comes from the description as the full_text
     df['full_text'] = df['summary'] 
 
     required_cols = ['title', 'summary', 'article_url', 'source', 'published_date', 'image_url', 'authors', 'full_text']
@@ -30,13 +30,13 @@ def standardize_worldnews(df):
     """Standardizes the DataFrame from worldnews_raw.csv, including UI fields."""
     df = df.rename(columns={
         'title': 'title',
-        'summary': 'summary', # Using 'text' as summary for now, will also map to full_text
+        'summary': 'summary',
         'url': 'article_url',
         'source_country': 'source',
         'publish_date': 'published_date',
-        'image': 'image_url',       # Add image as image_url
-        'authors': 'authors',       # Keep authors
-        'text': 'full_text'         # Add text as full_text'
+        'image': 'image_url',      
+        'authors': 'authors',       
+        'text': 'full_text'         
     })
     
     required_cols = ['title', 'summary', 'article_url', 'source', 'published_date', 'image_url', 'authors', 'full_text']
@@ -87,7 +87,6 @@ def main():
     df_combined.drop_duplicates(subset=['article_url'], keep='first', inplace=True)
 
     # Clean new UI-specific fields
-    #df_combined['summary'] = df_combined['summary'].apply(lambda x: str(x) if pd.notna(x) else "")
     df_combined['full_text'] = df_combined['full_text'].apply(lambda x: str(x) if pd.notna(x) else "")
     df_combined['image_url'] = df_combined['image_url'].apply(lambda x: str(x) if pd.notna(x) else "")
     df_combined['authors'] = df_combined['authors'].apply(clean_author_field)

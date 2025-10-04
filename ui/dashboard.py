@@ -54,7 +54,6 @@ if highlights_data:
 
                     # Clean the string if it's not a proper list
                     if isinstance(authors_raw, str):
-                        # Remove brackets, quotes, and split by comma
                         cleaned_authors = authors_raw.strip("[]").replace("'", "").replace('"', '')
                         authors = cleaned_authors if cleaned_authors else "N/A"
                     else:

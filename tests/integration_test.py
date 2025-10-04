@@ -2,7 +2,7 @@
 import pytest
 import httpx
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://backend:8000"
 
 @pytest.mark.integration
 def test_highlights_endpoint():

@@ -4,7 +4,6 @@ import httpx
 import os
 
 # Get the hostname from an environment variable, defaulting to localhost
-# This makes the test flexible for both local and Docker environments
 BACKEND_HOSTNAME = os.getenv("BACKEND_HOSTNAME", "127.0.0.1")
 BASE_URL = f"http://{BACKEND_HOSTNAME}:8000"
 

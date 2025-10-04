@@ -1,21 +1,9 @@
-# docker-compose.yml
-version: '3.8'
-
 services:
-  # This new service just builds the base image
-  base:
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile.base
+      dockerfile: backend/Dockerfile
     image: ai-news-base:latest
-
-  backend:
-    # This now depends on the 'base' service being built first
-    depends_on:
-      - base
-    # It uses the image built by the 'base' service
-    image: ai-news-base:latest
-    # We still need a custom command
     command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
@@ -25,13 +13,25 @@ services:
       - ./backend:/app/backend
       - ./services:/app/services
     hostname: backend
+    # --- ADD THIS HEALTHCHECK ---
+    #healthcheck:
+    #  test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+    #  interval: 10s
+    #  timeout: 5s
+    #  retries: 5
+    #  start_period: 20s
 
   frontend:
-    depends_on:
-      - base
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
     image: ai-news-base:latest
     command: streamlit run ui/dashboard.py --server.port 8501 --server.address 0.0.0.0
     ports:
       - "8501:8501"
     volumes:
       - ./ui:/app/ui
+    # --- UPDATE THE depends_on SECTION ---
+    #depends_on:
+    #  backend:
+    #    condition: service_healthy # Wait for the healthcheck to pass

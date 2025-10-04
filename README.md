@@ -74,6 +74,9 @@ pip install -r requirements.txt
         "similarity": "cosine"
       }]
     }
+4.  Configure Network Access:
+    In the left-hand menu, under "Security," click Network Access.
+    Click "Add IP Address" and select "Allow Access from Anywhere" (0.0.0.0/0). This is necessary for the Docker container to connect.
     ```
 
 ### 5. Create the `.env` File
@@ -93,31 +96,75 @@ WORLDNEWS_API_KEY="your_worldnews_api_key_here"
 
 ## 🚀 How to Run the Project
 
-### Step 1: Run the Data Pipeline
-Execute the following scripts **in order** from your terminal to fetch, process, and load the data.
+## Option A: Run with Docker (Recommended)
 
+This is the easiest way to run the entire application.
+1. Prerequisite: Install Docker Desktop and ensure it is running.
+
+2. Important: In ui/dashboard.py, make sure the backend URL is set to the Docker service name:
 ```bash
-# 1. Clean and standardize the raw data
-python scripts/1_process_data.py
+   BACKEND_URL = "http://backend:8000"
+```
+
+3. Run the Data Pipeline: Before starting the application, you must populate your database. Run the scripts in order:
+```bash
+# 1. Fetch, clean and standardize the raw data
+python scripts/1_fetch_data.py
+python scripts/2_process_data.py
 
 # 2. Add AI features (categories and embeddings)
-python scripts/2_generate_ai_features.py
+python scripts/3_generate_ai_features.py
 
 # 3. Load the final data into MongoDB
-python scripts/3_load_to_mongodb.py
+python scripts/4_load_to_mongodb.py
 ```
 
-### Step 2: Launch the Application
-You need to run the backend and frontend in **two separate terminals**.
-
-**Terminal 1: Start the Backend API**
+4. Build and Run with Docker Compose: From the project root directory, run:
 ```bash
-uvicorn backend.main:app --reload
+   docker-compose up --build
 ```
-The API will be available at `http://127.0.0.1:8000`.
+The application will be available at http://localhost:8501
 
-**Terminal 2: Start the Frontend UI**
+## Option B: Run Manually
+
+If you prefer not to use Docker, follow these steps.
+
+1. Create a Python Environment & Install Dependencies
 ```bash
-streamlit run ui/dashboard.py
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
 ```
-The application will open automatically in your web browser.
+
+2. Important: In ui/dashboard.py, make sure the backend URL is set to your local address:
+```bash
+   BACKEND_URL = "[http://127.0.0.1:8000](http://127.0.0.1:8000)"
+```
+
+3. Run the Data Pipeline
+Execute the following scripts in order to fetch, process, and load the data.
+```bash
+# 1. Fetch, clean and standardize the raw data
+python scripts/1_fetch_data.py
+python scripts/2_process_data.py
+
+# 2. Add AI features (categories and embeddings)
+python scripts/3_generate_ai_features.py
+
+# 3. Load the final data into MongoDB
+python scripts/4_load_to_mongodb.py
+```
+
+4. Launch the Application
+   You need to run the backend and frontend in two separate terminals.
+
+###Terminal 1: Start the Backend API
+```bash
+   uvicorn backend.main:app --reload
+```
+
+###Terminal 2: Start the Frontend UI
+```bash
+   streamlit run ui/dashboard.py
+```
+The application will be available at http://localhost:8501

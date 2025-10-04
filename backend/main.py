@@ -5,8 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pydantic import BaseModel
 from datetime import datetime, timedelta
-
-# Import the chatbot service we just created
 from services.chatbot import ask_question
 
 # --- INITIALIZATION ---
@@ -18,10 +16,10 @@ client = MongoClient(MONGO_URI)
 db = client.news_db
 collection = db.articles
 
-# Allow the frontend (running on a different port) to communicate with this backend
+# Allow the frontend to communicate with this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to your frontend's domain
+    allow_origins=["*"], # In production, restrict this to frontend's domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,48 +33,46 @@ class ChatRequest(BaseModel):
 @app.get("/highlights")
 def get_highlights():
     """
-    Finds top story clusters from the last 24 hours based on frequency.
+    Finds top story clusters for EACH category from the last 24 hours.
     """
-    twenty_four_hours_ago = datetime.now() - timedelta(hours=24)
+    categories = ["sports", "lifestyle", "music", "finance", "general news"]
+    highlights = {category: [] for category in categories}
     
-    # MongoDB Aggregation Pipeline to find top clusters
     pipeline = [
-        # 1. Filter for recent articles that are part of a cluster
+        {"$match": {"cluster_id": {"$ne": -1}}},        # 1. Filter for articles in a cluster
+        {"$sort": {"published_date": -1}},              # 2. Sort by date to get the newest representative
         {
-            "$match": {
-                "published_date": {"$gte": twenty_four_hours_ago},
-                "cluster_id": {"$ne": -1} # -1 are unique articles, not clusters
-            }
-        },
-        # 2. Group by cluster_id to count frequency and gather data
-        {
-            "$group": {
+            "$group": {                                 # 3. Group by story to calculate frequency
                 "_id": "$cluster_id",
                 "frequency": {"$sum": 1},
-                "representative_article": {"$first": "$$ROOT"}
+                "representative_article": {"$first": "$$ROOT"},
             }
         },
-        # 3. Sort by frequency (most reported stories first)
-        {"$sort": {"frequency": -1}},
-        # 4. Limit to the top 10 stories
-        {"$limit": 10}
+        {
+            "$setWindowFields": {                       # 4. Rank stories within each category
+                "partitionBy": "$representative_article.category",
+                "sortBy": {"frequency": -1},
+                "output": {"rank_in_category": {"$rank": {}}},
+            }
+        },
+        {"$match": {"rank_in_category": {"$lte": 10}}}, # 5. Keep only the top 10 from each category
     ]
     
     top_stories = list(collection.aggregate(pipeline))
     
-    # --- Prepare the final response ---
-    highlights = {"Top Stories": []}
+    # --- Organize the stories into their categories for the frontend ---
     for story in top_stories:
         article = story['representative_article']
-        article['_id'] = str(article['_id']) # Convert ObjectId
+        category = article.get('category')
         
-        # Clean potential NaN values
-        for key, value in article.items():
-            if isinstance(value, float) and value != value:
-                article[key] = None
+        if category in highlights:
+            article['_id'] = str(article['_id'])
+            for key, value in article.items():
+                if isinstance(value, float) and value != value:
+                    article[key] = None
 
-        article['frequency'] = story['frequency'] # Add frequency to the article object
-        highlights["Top Stories"].append(article)
+            article['frequency'] = story['frequency']
+            highlights[category].append(article)
         
     return highlights
 

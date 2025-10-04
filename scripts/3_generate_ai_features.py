@@ -46,7 +46,7 @@ def generate_embeddings_and_clusters(df, batch_size=32):
     # Normalize embeddings for cosine similarity
     embeddings_norm = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
     
-    clustering = DBSCAN(eps=0.3, min_samples=2, metric='cosine').fit(embeddings_norm)
+    clustering = DBSCAN(eps=0.4, min_samples=2, metric='cosine').fit(embeddings_norm)
     
     # Add the cluster ID to each article
     df['cluster_id'] = clustering.labels_
